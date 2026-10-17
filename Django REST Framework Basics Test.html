@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Django REST Framework Basics Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mu:#5b6478;--ac:#4f46e5;--ac2:#eceaff;--ok:#0f9d58;--bad:#d93025;--bd:#e2e5ef;--code:#0f172a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--card:#1b1f2c;--tx:#eef0f7;--mu:#a3abc2;--ac:#8b85ff;--ac2:#2a2d4a;--ok:#4cd08a;--bad:#ff7b72;--bd:#2c3144;--code:#0b1020}}
+:root[data-theme="dark"]{--bg:#12141c;--card:#1b1f2c;--tx:#eef0f7;--mu:#a3abc2;--ac:#8b85ff;--ac2:#2a2d4a;--ok:#4cd08a;--bad:#ff7b72;--bd:#2c3144;--code:#0b1020}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+main{max-width:820px;margin:0 auto;padding:12px}
+h1{color:var(--ac);font-size:1.7rem;margin:8px 0}
+h2{margin:22px 0 8px;font-size:1.25rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:12px 0}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;background:var(--ac);color:#fff;border-radius:12px;padding:10px 14px;font-weight:600}
+.bar.low{background:var(--bad)}
+input[type=text]{width:100%;padding:11px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit}
+textarea,pre{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86rem;line-height:1.55}
+textarea{width:100%;min-height:170px;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--code);color:#e2e8f0;tab-size:4}
+pre{background:var(--code);color:#e2e8f0;border-radius:10px;padding:10px 12px;overflow-x:auto;margin:6px 0}
+button{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin:6px 6px 0 0}
+button.g{background:var(--ac2);color:var(--tx)}
+.opt{display:flex;gap:10px;padding:8px 12px;border:1px solid var(--bd);border-radius:10px;margin:6px 0;cursor:pointer;overflow-wrap:anywhere}
+.opt:has(input:checked){background:var(--ac2);border-color:var(--ac)}
+.opt span{font-family:ui-monospace,Menlo,monospace;font-size:.9rem}
+.qn{font-weight:700;color:var(--ac)}
+.big{font-size:2.4rem;font-weight:700}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.mu{color:var(--mu);font-size:.9rem}
+.hide{display:none}
+@media print{.bar,button{display:none}}
+</style>
+</head>
+<body>
+<main>
+<div id="start" class="card">
+<h1>Django REST Framework Basics Test</h1>
+<p>Topics: REST and DRF basics, models, serializers (ModelSerializer), and function-based API views with @api_view.</p>
+<ul>
+<li><b>Part A:</b> 100 multiple-choice questions, 1 mark each (including code-reading questions).</li>
+<li><b>Part B1:</b> 10 fill-in-the-code problems, 1 mark each.</li>
+<li><b>Part B2:</b> 5 write-the-code problems, 1 mark each.</li>
+<li><b>Total:</b> 115 marks. Pass mark: 40%. <b>Time:</b> 1 hour 30 minutes. The test is submitted automatically when time ends.</li>
+</ul>
+<input type="text" id="nm" placeholder="Enter your full name">
+<button onclick="begin()">Start Test</button>
+</div>
+<div id="test" class="hide">
+<div class="bar" id="tb"><span>Time left: <span id="tm">01:30:00</span></span><span>Answered: <span id="an">0</span>/100</span></div>
+<h2>Part A: Multiple Choice Questions</h2><div id="mcq"></div>
+<h2>Part B1: Fill in the Code</h2>
+<div class="card mu">Type only the missing word(s) that replace the blank ______ .</div>
+<div id="fi"></div>
+<h2>Part B2: Write the Code</h2>
+<div class="card mu">Write the complete code. Assume all imports are already done. Answers are checked by looking for the required parts of the code. Use the <b>Check my code</b> button to see which required parts are found (&#10003;) and which are missing (&#10007;).</div>
+<div id="wr"></div>
+<button id="sub" onclick="trySubmit()">Submit Test</button>
+</div>
+<div id="res" class="hide"></div>
+</main>
+<script>
+const Q=[
+[`DRF stands for:`,`Django REST Framework|Django Remote Framework|Data REST Framework|Django Request Form`,0],
+[`API stands for:`,`Application Programming Interface|Applied Program Interface|Application Process Integration|Automatic Programming Interface`,0],
+[`Which command installs Django REST Framework?`,`pip install drf|pip install djangorestframework|pip install django-rest|pip install rest_framework`,1],
+[`Which name must be added to INSTALLED_APPS after installing DRF?`,`rest|drf|djangorestframework|rest_framework`,3],
+[`Which data format do REST APIs commonly return?`,`CSS|PNG|JSON|Python files`,2],
+[`Which HTTP method is used to read data?`,`GET|POST|PUT|DELETE`,0],
+[`Which HTTP method is normally used to create new data?`,`GET|POST|HEAD|OPTIONS`,1],
+[`Which HTTP method is used to delete data?`,`REMOVE|CLEAR|DELETE|POP`,2],
+[`A Django model is a Python class that inherits from:`,`serializers.Serializer|models.Model|APIView|forms.Form`,1],
+[`Which field type suits a product name?`,`CharField|IntegerField|BooleanField|DateField`,0],
+[`Which field type stores whole numbers like quantity?`,`CharField|TextField|IntegerField|BooleanField`,2],
+[`Which command creates migration files after you change a model?`,`python manage.py migrate|python manage.py makemigrations|python manage.py runserver|python manage.py startapp`,1],
+[`Product.objects.all() returns:`,`A single object|A string|A number|A QuerySet (many objects)`,3],
+[`Product.objects.get(id=1) returns:`,`A QuerySet|A list of all products|One Product object|A JSON string`,2],
+[`A serializer is used to:`,`Convert model objects to JSON (and JSON back to objects)|Design the HTML page|Create URLs|Create migrations`,0],
+[`In which file are serializers usually written?`,`urls.py|serializers.py|admin.py|settings.py`,1],
+[`Which line imports the serializers module?`,`from rest_framework import serializers|from django.db import serializers|from django import serializers|from rest_framework import models`,0],
+[`Which line creates a serializer for the Product model?`,`class ProductSerializer(models.Model):|class ProductSerializer(serializers.ModelSerializer):|class ProductSerializer(APIView):|class ProductSerializer(forms.Form):`,1],
+[`Inside a ModelSerializer, which inner class connects the model and its fields?`,`Config|Options|Info|Meta`,3],
+[`In class Meta, what does model = Product do?`,`Tells the serializer which model to use|Creates a new table|Deletes the Product model|Defines a URL`,0],
+[`What does fields = '__all__' mean?`,`No fields are shown|Only id is shown|All model fields are included|Only the first field is shown`,2],
+[`Which line selects only name and price?`,`fields = name, price|fields = ['name', 'price']|field = name + price|include = ['name', 'price']`,1],
+[`What does serializer.data give?`,`An HTML page|A migration file|A URL|The serialized data (dict) that can be sent as JSON`,3],
+[`Which line serializes many objects?`,`ProductSerializer(products, many=True)|ProductSerializer(products)|ProductSerializer(many=products)|ProductSerializer.many(products)`,0],
+[`Which line serializes one object named product?`,`ProductSerializer(product, many=True)|ProductSerializer.data(product)|ProductSerializer(product)|Serializer(product).json`,2],
+[`Which line creates a serializer for incoming data?`,`ProductSerializer(request)|ProductSerializer(data=request.data)|ProductSerializer(json=request)|ProductSerializer.create(request)`,1],
+[`serializer.is_valid() checks:`,`If the database exists|If the URL is correct|If the incoming data is valid|If migrations are applied`,2],
+[`serializer.save() does what (after is_valid)?`,`Saves the object in the database|Deletes the object|Only checks the data|Shows an HTML page`,0],
+[`Which import gives the @api_view decorator?`,`from rest_framework.decorators import api_view|from django.views import api_view|from rest_framework import api_view|from rest_framework.views import api_view`,0],
+[`@api_view(['GET']) means the view:`,`Accepts all methods|Accepts only POST|Accepts only GET|Accepts no method`,2],
+[`The argument of @api_view is:`,`A URL|A list of HTTP methods|A model|A serializer`,1],
+[`@api_view(['GET', 'POST']) allows:`,`Only GET|Only POST|Only DELETE|Both GET and POST`,3],
+[`Where is the @api_view decorator written?`,`Directly above the view function (def line)|In models.py|Inside class Meta|In settings.py`,0],
+[`Which class is used to return data from a DRF function view?`,`render|redirect|Response|HttpResponse only`,2],
+[`Which import gives Response?`,`from rest_framework.response import Response|from django.http import Response|from rest_framework import response|from django.shortcuts import Response`,0],
+[`In an @api_view function, request.data contains:`,`The URL|The data sent by the client in the request body|All database rows|The settings`,1],
+[`If a view allows only GET and the client sends POST, DRF returns:`,`200 OK|404 Not Found|405 Method Not Allowed|201 Created`,2],
+[`Which status is normally returned after successfully creating an object?`,`status.HTTP_201_CREATED|status.HTTP_404_NOT_FOUND|status.HTTP_500_INTERNAL_SERVER_ERROR|status.HTTP_301_MOVED`,0],
+[`What does this view return for a GET request?
+@api_view(['GET'])
+def hello(request):
+    return Response({'msg': 'Hello'})`,`An HTML page|An error|{"msg": "Hello"}|Hello`,2],
+[`In the URL path('products/<int:pk>/', views.product_detail), what is <int:pk>?`,`A model field|An integer taken from the URL and passed to the view as pk|A serializer|A template tag`,1],
+[`Which field type stores a price like 99.50 exactly?`,`CharField|DecimalField|BooleanField|TextField`,1],
+[`Which field type stores True or False?`,`CharField|DateField|FloatField|BooleanField`,3],
+[`Which field type stores a date?`,`TextField|DateField|IntegerField|BooleanField`,1],
+[`Which field type is best for a long description?`,`CharField|IntegerField|TextField|BooleanField`,2],
+[`Which line creates a column named name with a maximum of 100 characters?`,`name = models.CharField(100)|name = CharField(max_length=100)|name = models.Char(max_length=100)|name = models.CharField(max_length=100)`,3],
+[`Product.objects.filter(price=100) returns:`,`Only one object|A QuerySet of products with price 100|A string|A boolean`,1],
+[`Which line creates a Product record in Python code?`,`Product.add(name='Pen')|Product.objects.new(name='Pen')|Product.insert('Pen')|Product.objects.create(name='Pen')`,3],
+[`If get() finds no matching object, it raises:`,`KeyError|ValueError|Product.DoesNotExist|A 404 page automatically`,2],
+[`Which primary key field does Django add automatically?`,`id|key|uid|pk_id`,0],
+[`Which command opens the Django shell?`,`python manage.py console|python manage.py python|python manage.py shell|python manage.py testshell`,2],
+[`A Product has id=1 and name='Pen'. With fields = ['id', 'name'], serializer.data looks like:`,`['id', 'name']|{'id': 1, 'name': 'Pen'}|<Product: Pen>|{'Pen'}`,1],
+[`What does serializer.errors contain?`,`The saved object|All model fields|The URL|The validation errors after is_valid() fails`,3],
+[`When should you read serializer.errors?`,`After is_valid() returns False|Before creating the serializer|Only after save()|Never`,0],
+[`What does exclude = ['price'] do in Meta?`,`Only price is included|Price is left out and all other fields are included|All fields are removed|Nothing changes`,1],
+[`Which Meta option leaves out some fields?`,`remove|skip|exclude|hide`,2],
+[`Which fields are included with fields = ['id', 'name']?`,`All fields|Only id|Only name|Only id and name`,3],
+[`Which serializer class builds its fields automatically from a model?`,`ModelSerializer|APIView|Response|Meta`,0],
+[`With ModelSerializer you do not need to:`,`Create the model|Write every model field again inside the serializer|Install Django|Run the server`,1],
+[`Can one serializer class be used both to list and to create Products?`,`No, two classes are always needed|Only for listing|Yes|Only for creating`,2],
+[`What is ProductSerializer(products, many=True).data?`,`One dictionary|A string|A model class|A list of dictionaries (one per product)`,3],
+[`What happens if you forget many=True when serializing a QuerySet?`,`It works exactly the same|The QuerySet is not treated as many objects, so you get an error or wrong data|The database is deleted|Migrations run`,1],
+[`In ProductSerializer(data=request.data), data= is used for:`,`Outgoing data to display|The model name|Incoming data to validate and save|The URL`,2],
+[`In ProductSerializer(product), why is data= not used?`,`We are converting an existing object to JSON|We are creating a new object|We are validating input|We are deleting`,0],
+[`ProductSerializer(data={'name': 'Pen'}).is_valid() returns False when:`,`The name is Pen|A required field (such as price) is missing|The serializer is imported|It always returns False`,1],
+[`Which line imports the serializer in views.py?`,`from .models import ProductSerializer|from django import ProductSerializer|from .serializers import ProductSerializer|import ProductSerializer from serializers`,2],
+[`Which of these is NOT a job of a serializer?`,`Routing URLs|Converting model objects to JSON data|Validating incoming data|Saving validated data`,0],
+[`Which of these can be passed directly into Response()?`,`The serializer object itself|The model class|A template|serializer.data`,3],
+[`With fields = ['name'], which model field is missing from the output?`,`id|name|Neither|Both id and name`,0],
+[`Which line inside class Meta is correct?`,`model == Product|Model = Product|model = Product|model = 'Product'`,2],
+[`What does serializers.ModelSerializer give you automatically?`,`Basic create() and update() methods|A template|A migration file|A URL pattern`,0],
+[`What happens if you return Response from a normal function without @api_view?`,`It works the same|It gives an error because it is not a DRF view|Django restarts|Migrations run`,1],
+[`What is the first argument of an @api_view function?`,`request|response|model|serializer`,0],
+[`request.data is mainly used to read:`,`Database rows|URLs|Data sent by the client (for example in POST or PUT)|Installed apps`,2],
+[`Which line gets one product using pk?`,`Product.get(pk)|Product.find(pk)|Product.objects(pk)|Product.objects.get(pk=pk)`,3],
+[`Which import gives the status codes?`,`from django.http import status|from rest_framework import status|from rest_framework.response import status|from django import status`,1],
+[`Which status means the request was successful (OK)?`,`status.HTTP_404_NOT_FOUND|status.HTTP_500_INTERNAL_SERVER_ERROR|status.HTTP_200_OK|status.HTTP_400_BAD_REQUEST`,2],
+[`Which status means the object was not found?`,`status.HTTP_404_NOT_FOUND|status.HTTP_200_OK|status.HTTP_201_CREATED|status.HTTP_400_BAD_REQUEST`,0],
+[`Which status means the request data was bad (invalid)?`,`status.HTTP_200_OK|status.HTTP_201_CREATED|status.HTTP_404_NOT_FOUND|status.HTTP_400_BAD_REQUEST`,3],
+[`Which status is commonly returned after deleting an object?`,`status.HTTP_201_CREATED|status.HTTP_204_NO_CONTENT|status.HTTP_404_NOT_FOUND|status.HTTP_405_METHOD_NOT_ALLOWED`,1],
+[`Which line returns errors for invalid data?`,`return Response(serializer.data, status=400)|return serializer.errors|return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)|return Response(errors)`,2],
+[`Which HTTP method is normally used to update an object?`,`PUT|GET|HEAD|FETCH`,0],
+[`@api_view(['PUT', 'DELETE']) allows:`,`All methods|GET only|POST only|PUT and DELETE only`,3],
+[`Which line checks the request method inside a view?`,`if request.type == 'POST':|if request.method == 'POST':|if method == POST:|if request.is_post():`,1],
+[`A view has @api_view(['GET', 'POST']). How do you run different code for each method?`,`Use two settings files|Write two urls.py files|Check request.method with if|It is not possible`,2],
+[`Which path correctly takes an integer id from the URL?`,`path('products/<int:pk>/', views.product_detail)|path('products/{pk}/', views.product_detail)|path('products/:pk/', views.product_detail)|path('products/<pk>int/', views.product_detail)`,0],
+[`The view for path('products/<int:pk>/', ...) must accept:`,`Only request|request and pk|Only pk|Nothing`,1],
+[`Which line deletes a product object?`,`product.remove()|Product.drop()|product.delete()|product.clear()`,2],
+[`Which line prepares a serializer to update an existing product?`,`ProductSerializer(data=product)|ProductSerializer(request, product)|ProductSerializer.update(product)|ProductSerializer(product, data=request.data)`,3],
+[`By default, Response({'a': 1}) is sent to the client as:`,`CSS|JSON|A PNG image|A Python file`,1],
+[`Opening a GET API URL in the browser shows:`,`The Django admin|A migration|The DRF browsable API page|A CSS file`,2],
+[`A client sends a POST request to this view. What is returned?
+@api_view(['GET'])
+def hello(request):
+    return Response({'msg': 'Hi'})`,`{"msg": "Hi"}|405 Method Not Allowed|404 Not Found|201 Created`,1],
+[`There are 2 products in the database. What does this return?
+products = Product.objects.all()
+serializer = ProductSerializer(products, many=True)
+return Response(serializer.data)`,`One dictionary|An error|An empty list|A list with 2 dictionaries`,3],
+[`Valid data is sent. What status does the client get?
+serializer = ProductSerializer(data=request.data)
+if serializer.is_valid():
+    serializer.save()
+    return Response(serializer.data, status=201)
+return Response(serializer.errors, status=400)`,`400|201|200|404`,1],
+[`Invalid data is sent to this code. What does the client get?
+serializer = ProductSerializer(data=request.data)
+if serializer.is_valid():
+    serializer.save()
+    return Response(serializer.data, status=201)
+return Response(serializer.errors, status=400)`,`Status 201 and the saved data|Status 200 and an empty list|Status 400 and the errors|Status 404`,2],
+[`What does this return?
+product = Product.objects.get(pk=pk)
+serializer = ProductSerializer(product)
+return Response(serializer.data)`,`One product as a dictionary|A list of products|A template|A model class`,0],
+[`A POST request is sent. What is returned?
+@api_view(['GET', 'POST'])
+def items(request):
+    if request.method == 'GET':
+        return Response('list')
+    return Response('create')`,`list|405 error|create|Nothing`,2],
+[`A GET request is sent. What is returned?
+@api_view(['GET', 'POST'])
+def items(request):
+    if request.method == 'GET':
+        return Response('list')
+    return Response('create')`,`list|create|405 error|Nothing`,0],
+[`Which key appears in serializer.data?
+class Meta:
+    model = Product
+    fields = ['name']`,`id and name|price only|All fields|Only name`,3],
+[`Which fields appear in the output?
+class Meta:
+    model = Product
+    exclude = ['price']`,`Only price|All fields except price|No fields|Only id`,1],
+[`What does this view do?
+@api_view(['DELETE'])
+def product_delete(request, pk):
+    product = Product.objects.get(pk=pk)
+    product.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)`,`Creates a product|Returns the product list|Updates the product|Deletes the product and returns 204 No Content`,3]
+];
+const SEC={"0":"Section 1: REST and DRF Basics","8":"Section 2: Models","14":"Section 3: Serializers","28":"Section 4: @api_view Function Views","40":"Section 5: More on Models","50":"Section 6: More on Serializers","70":"Section 7: More on @api_view Views","90":"Section 8: Read the Code"};
+const FI=[
+{d:"Install Django REST Framework.",c:"pip install ______",a:["djangorestframework"]},
+{d:"Add DRF to the installed apps in settings.py.",c:"INSTALLED_APPS = [\n    ...,\n    '______',\n]",a:["rest_framework"]},
+{d:"Create a serializer class for a model.",c:"class ProductSerializer(serializers.______):\n    class Meta:\n        model = Product",a:["ModelSerializer"]},
+{d:"Include all model fields in the serializer.",c:"class Meta:\n    model = Product\n    ______ = '__all__'",a:["fields"]},
+{d:"Allow only GET requests on the view.",c:"@______(['GET'])\ndef product_list(request):",a:["api_view"]},
+{d:"Serialize many objects.",c:"serializer = ProductSerializer(products, ______=True)",a:["many"]},
+{d:"Return the serialized data from the view.",c:"return ______(serializer.data)",a:["Response"]},
+{d:"Import the serializers module.",c:"from rest_framework import ______",a:["serializers"]},
+{d:"Return the 'not found' status when the object is missing.",c:"return Response(status=status.______)",a:["HTTP_404_NOT_FOUND"]},
+{d:"Validate the incoming data.",c:"if serializer.______():\n    serializer.save()",a:["is_valid"]}
+];
+const WR=[
+{t:"Write a ModelSerializer",d:"The Product model has the fields name and price. Write ProductSerializer using ModelSerializer that includes all fields.",
+sol:"class ProductSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Product\n        fields = '__all__'",
+ck:[/class\s+ProductSerializer\(\s*serializers\.ModelSerializer\s*\)\s*:/,/class\s+Meta\s*:/,/model\s*=\s*Product\b/,/fields\s*=\s*'__all__'/]},
+{t:"Write a GET list view",d:"Write a function view product_list that allows only GET, gets all Product objects, serializes them with ProductSerializer and returns the data.",
+sol:"@api_view(['GET'])\ndef product_list(request):\n    products = Product.objects.all()\n    serializer = ProductSerializer(products, many=True)\n    return Response(serializer.data)",
+ck:[/@api_view\(\s*\[\s*'GET'\s*\]\s*\)/,/def\s+product_list\(\s*request\s*\)\s*:/,/Product\.objects\.all\(\)/,/ProductSerializer\([^)]*many\s*=\s*True[^)]*\)/,/return\s+Response\(\s*\w+\.data\s*\)/]},
+{t:"Write a POST create view",d:"Write a function view product_create that allows only POST. Validate the incoming data with ProductSerializer, save it if valid and return the data with status 201. If not valid, return the errors with status 400.",
+sol:"@api_view(['POST'])\ndef product_create(request):\n    serializer = ProductSerializer(data=request.data)\n    if serializer.is_valid():\n        serializer.save()\n        return Response(serializer.data, status=status.HTTP_201_CREATED)\n    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)",
+ck:[/@api_view\(\s*\[\s*'POST'\s*\]\s*\)/,/def\s+product_create\(\s*request\s*\)\s*:/,/ProductSerializer\(\s*data\s*=\s*request\.data\s*\)/,/\.is_valid\(/,/\.save\(\)/,/Response\([^)]*(201|HTTP_201_CREATED)/,/Response\([^)]*\.errors[^)]*(400|HTTP_400_BAD_REQUEST)/]},
+{t:"Write a detail view",d:"Write a function view product_detail(request, pk) that allows only GET, gets the Product with that pk, serializes it with ProductSerializer and returns the data.",
+sol:"@api_view(['GET'])\ndef product_detail(request, pk):\n    product = Product.objects.get(pk=pk)\n    serializer = ProductSerializer(product)\n    return Response(serializer.data)",
+ck:[/@api_view\(\s*\[\s*'GET'\s*\]\s*\)/,/def\s+product_detail\(\s*request\s*,\s*pk\s*\)\s*:/,/Product\.objects\.get\(\s*(pk|id)\s*=\s*pk\s*\)/,/ProductSerializer\(\s*\w+\s*\)/,/return\s+Response\(\s*\w+\.data\s*\)/]},
+{t:"Write a DELETE view",d:"Write a function view product_delete(request, pk) that allows only DELETE, gets the Product with that pk, deletes it and returns an empty Response with status 204.",
+sol:"@api_view(['DELETE'])\ndef product_delete(request, pk):\n    product = Product.objects.get(pk=pk)\n    product.delete()\n    return Response(status=status.HTTP_204_NO_CONTENT)",
+ck:[/@api_view\(\s*\[\s*'DELETE'\s*\]\s*\)/,/def\s+product_delete\(\s*request\s*,\s*pk\s*\)\s*:/,/Product\.objects\.get\(\s*(pk|id)\s*=\s*pk\s*\)/,/\.delete\(\)/,/Response\([^)]*(204|HTTP_204_NO_CONTENT)/]}
+];
+const LB=[["Class ProductSerializer inherits serializers.ModelSerializer","Inner class Meta","model = Product","fields = '__all__'"],["@api_view(['GET'])","def product_list(request)","Gets all products with Product.objects.all()","Serializes with many=True","Returns Response(serializer.data)"],["@api_view(['POST'])","def product_create(request)","ProductSerializer(data=request.data)","Calls is_valid()","Calls save()","Returns status 201 when data is valid","Returns serializer.errors with status 400 when data is invalid"],["@api_view(['GET'])","def product_detail(request, pk)","Gets the product with Product.objects.get(pk=pk)","ProductSerializer(product)","Returns Response(serializer.data)"],["@api_view(['DELETE'])","def product_delete(request, pk)","Gets the product with Product.objects.get(pk=pk)","Calls delete()","Returns Response with status 204"]];
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const nf=s=>String(s||'').trim().replace(/\s+/g,'').replace(/"/g,"'");
+const nq=s=>String(s||'').replace(/"/g,"'").replace(/\r/g,'');
+const wres=(i,s)=>WR[i].ck.map(r=>r.test(nq(s)));
+const K='drf_test_v2',DUR=90*60*1000,PASS=46;
+let S={name:'',start:0,ans:{},fi:{},wr:{},done:0},timer=null,armed=false;
+try{Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function qh(q){var l=q.split("\n");return '<div>'+esc(l[0])+'</div>'+(l.length>1?'<pre>'+esc(l.slice(1).join("\n"))+'</pre>':'')}
+function build(){
+ $('mcq').innerHTML=Q.map(function(q,i){return(SEC[i]?'<h2>'+SEC[i]+'</h2>':'')+'<div class="card"><span class="qn">Q'+(i+1)+'.</span> '+qh(q[0])+q[1].split('|').map(function(o,j){return '<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"'+(S.ans[i]===j?' checked':'')+' onchange="pick('+i+','+j+')"><span>'+esc(o)+'</span></label>'}).join('')+'</div>'}).join('');
+ $('fi').innerHTML=FI.map(function(f,j){return '<div class="card"><span class="qn">Problem '+(j+1)+'</span> <span class="mu">(1 mark)</span><p>'+esc(f.d)+'</p><pre>'+esc(f.c)+'</pre><input type="text" placeholder="Missing word(s)" value="'+esc(S.fi[j]||'').replace(/"/g,'&quot;')+'" oninput="fin('+j+',this.value)"></div>'}).join('');
+ $('wr').innerHTML=WR.map(function(p,i){return '<div class="card"><span class="qn">Problem '+(FI.length+i+1)+': '+esc(p.t)+'</span> <span class="mu">(1 mark)</span><p>'+esc(p.d)+'</p><textarea spellcheck="false" placeholder="Write your code here" onkeydown="tab(event)" oninput="win('+i+',this.value)">'+esc(S.wr[i]||'')+'</textarea><button class="g" onclick="chkW('+i+')">Check my code</button><div id="wc'+i+'"></div></div>'}).join('')}
+function tab(e){if(e.key==='Tab'){e.preventDefault();var t=e.target,s=t.selectionStart;t.value=t.value.slice(0,s)+'    '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+4;t.dispatchEvent(new Event('input'))}}
+function chkW(i){var s=S.wr[i]||'',el=$('wc'+i);if(!s.trim()){el.innerHTML='<div class="bad">Write your code first.</div>';return}var r=wres(i,s),n=r.filter(Boolean).length;el.innerHTML=LB[i].map(function(l,k){return '<div class="'+(r[k]?'ok':'bad')+'">'+(r[k]?'&#10003; ':'&#10007; ')+esc(l)+'</div>'}).join('')+'<div class="mu">'+n+' of '+r.length+' required parts found.'+(n===r.length?' Your code looks correct.':' Fix the parts marked &#10007;.')+'</div>'}
+function pick(i,j){S.ans[i]=j;save();pick0()}
+function fin(j,v){S.fi[j]=v;save()}function win(i,v){S.wr[i]=v;save()}
+function pick0(){$('an').textContent=Object.keys(S.ans).length}
+function begin(){var n=$('nm').value.trim();if(!n){$('nm').focus();return}S.name=n;S.start=Date.now();save();run()}
+function run(){$('start').classList.add('hide');if(S.done){result();return}$('test').classList.remove('hide');build();pick0();tick();timer=setInterval(tick,1000)}
+function tick(){var r=S.start+DUR-Date.now();if(r<=0){submit();return}var h=Math.floor(r/3600000),m=Math.floor(r%3600000/60000),s=Math.floor(r%60000/1000);$('tm').textContent=[h,m,s].map(function(x){return String(x).padStart(2,'0')}).join(':');$('tb').classList.toggle('low',r<300000)}
+function trySubmit(){var left=Q.length-Object.keys(S.ans).length;if(!armed&&left>0){armed=true;$('sub').textContent=left+' MCQs unanswered. Press again to submit';return}submit()}
+function submit(){clearInterval(timer);S.done=1;S.end=Date.now();save();$('test').classList.add('hide');result()}
+function result(){
+ var sc=0,w=[];Q.forEach(function(q,i){if(S.ans[i]===q[2])sc++;else w.push(i)});
+ var fm=FI.filter(function(f,j){return f.a.some(function(a){return nf(a)===nf(S.fi[j])})}).length,
+ wm=WR.filter(function(p,i){return wres(i,S.wr[i]).every(Boolean)}).length,
+ tot=sc+fm+wm,pass=tot>=PASS,att=Object.keys(S.ans).length,used=Math.min(S.end||Date.now(),S.start+DUR)-S.start;
+ var h='<div class="card" style="text-align:center"><h1>Test Result</h1><div>'+esc(S.name)+'</div><div class="big '+(pass?'ok':'bad')+'">'+tot+' / 115</div><div>'+Math.round(tot/115*100)+'% &middot; '+(pass?'<span class="ok">PASS</span>':'<span class="bad">FAIL</span>')+'</div><p>Part A (MCQ): <b>'+sc+' / 100</b> &nbsp;|&nbsp; Part B1 (Fill in the code): <b>'+fm+' / 10</b> &nbsp;|&nbsp; Part B2 (Write the code): <b>'+wm+' / 5</b></p><div class="mu">MCQ: '+sc+' correct, '+(att-sc)+' wrong, '+(Q.length-att)+' unanswered &middot; Time used: '+Math.floor(used/60000)+' min</div><button onclick="window.print()">Print / Save as PDF</button></div>';
+ h+='<h2>Part A: Wrong and Unanswered Questions ('+w.length+')</h2>';
+ if(!w.length)h+='<div class="card ok">All answers are correct!</div>';
+ w.forEach(function(i){var q=Q[i],o=q[1].split('|');h+='<div class="card"><span class="qn">Q'+(i+1)+'.</span> '+qh(q[0])+'<div class="bad">Your answer: '+(S.ans[i]===undefined?'Not answered':'<code>'+esc(o[S.ans[i]])+'</code>')+'</div><div class="ok">Correct answer: <code>'+esc(o[q[2]])+'</code></div></div>'});
+ h+='<h2>Part B1: Fill in the Code</h2>';
+ FI.forEach(function(f,j){var ok=f.a.some(function(a){return nf(a)===nf(S.fi[j])});h+='<div class="card"><span class="qn">Problem '+(j+1)+'</span> '+(ok?'<span class="ok">&#10003; Correct (1/1)</span>':'<span class="bad">&#10007; Wrong (0/1)</span>')+'<p>'+esc(f.d)+'</p><pre>'+esc(f.c)+'</pre><div class="'+(ok?'ok':'bad')+'">Your answer: '+(S.fi[j]&&S.fi[j].trim()?'<code>'+esc(S.fi[j])+'</code>':'Not answered')+'</div>'+(ok?'':'<div class="ok">Correct answer: <code>'+esc(f.a[0])+'</code></div>')+'</div>'});
+ h+='<h2>Part B2: Write the Code</h2>';
+ WR.forEach(function(p,i){var r=wres(i,S.wr[i]),good=r.every(Boolean);h+='<div class="card"><span class="qn">Problem '+(FI.length+i+1)+': '+esc(p.t)+'</span> '+(good?'<span class="ok">&#10003; Correct (1/1)</span>':'<span class="bad">&#10007; '+r.filter(Boolean).length+'/'+r.length+' required parts found (0/1)</span>')+'<p>'+esc(p.d)+'</p><div class="mu">Your code:</div><pre>'+(S.wr[i]&&S.wr[i].trim()?esc(S.wr[i]):'(not attempted)')+'</pre><div class="ok">Model solution:</div><pre>'+esc(p.sol)+'</pre></div>'});
+ h+='<button class="g" onclick="try{localStorage.removeItem(\''+K+'\')}catch(e){}location.reload()">Reset (for teacher)</button>';
+ $('res').innerHTML=h;$('res').classList.remove('hide');scrollTo(0,0)}
+if(S.start)run();
+</script>
+</body>
+</html>
